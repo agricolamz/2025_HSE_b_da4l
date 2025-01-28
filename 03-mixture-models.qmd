@@ -22,24 +22,24 @@ spam_sms <- read_csv("https://raw.githubusercontent.com/agricolamz/2024_HSE_b_da
 
 glimpse(spam_sms)
 
-spam_sms %>% 
+spam_sms |> 
   mutate(n_char = nchar(message)) ->
   spam_sms
   
 glimpse(spam_sms)
 
-spam_sms %>% 
+spam_sms |> 
   ggplot(aes(n_char))+
   geom_histogram(fill = "gray90")+
   labs(caption = "данные из kaggle.com/uciml/sms-spam-collection-dataset",
        x = "количество символов",
-       y = "значение функции плотности")
+       y = "количество сообщений")
 ```
 
 Мы видим два явных горба и, как можно догадаться, это связано с тем, что спамерские сообщения в среднем длиннее и сосредоточены вокруг ограничения смс в 160 символов:
 
 ```{r}
-spam_sms %>% 
+spam_sms |> 
   ggplot(aes(n_char))+
   geom_histogram(fill = "gray70", aes(y = after_stat(density)))+
   geom_density(aes(fill = type), alpha = 0.3)+
@@ -75,7 +75,7 @@ new_dnorm <- function(x, mu, sigma, lambda){
   dnorm(x, mu, sigma)*lambda
 }
 
-spam_sms %>% 
+spam_sms |> 
   ggplot(aes(n_char))+
   geom_histogram(aes(y = after_stat(density)), fill = "gray90")+
   stat_function(fun = new_dnorm, 
@@ -111,9 +111,9 @@ which(first > second)
 Если в смс-сообщении больше 62 символов, то согласно нашей модели, вероятнее всего это спам.
 
 ```{r}
-spam_sms %>% 
-  mutate(model_predict = ifelse(n_char > 63, "predicted_spam", "predicted_ham")) %>% 
-  count(model_predict, type) %>% 
+spam_sms |> 
+  mutate(model_predict = ifelse(n_char > 63, "predicted_spam", "predicted_ham")) |> 
+  count(model_predict, type) |> 
   pivot_wider(names_from = type, values_from = n)
 ```
 
@@ -127,14 +127,14 @@ spam_sms %>%
 #| echo: false
 #| message: false
 
-read_csv("https://raw.githubusercontent.com/agricolamz/2024_HSE_b_da4l/main/data/Coretta_2017_icelandic.csv") %>% 
+read_csv("https://raw.githubusercontent.com/agricolamz/2024_HSE_b_da4l/main/data/Coretta_2017_icelandic.csv") |> 
   filter(speaker == "tt01", vowel == "a") ->
   vowel_dur
 
 set.seed(42)
 vowel_length_est <- normalmixEM(vowel_dur$vowel.dur, k = 3)
 
-vowel_dur %>% 
+vowel_dur |> 
   ggplot(aes(vowel.dur))+
   geom_histogram(aes(y = after_stat(density)), fill = "gray90")+
   stat_function(fun = new_dnorm, 
@@ -157,7 +157,7 @@ vowel_dur %>%
        x = "длительность гласного [a] носителя tt01",
        y = "значение функции плотности")
 
-vowel_dur %>% 
+vowel_dur |> 
   ggplot(aes(vowel.dur))+
   geom_histogram(aes(y = after_stat(density)), fill = "gray90")+
   geom_density(aes(color = place))+
