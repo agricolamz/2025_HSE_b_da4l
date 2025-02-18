@@ -145,16 +145,16 @@ mikhalevskaja |>
 read_csv("https://raw.githubusercontent.com/agricolamz/2022_da4l/master/data/Coretta_2017_icelandic.csv") ->
   vowels
 
-beta_est <- fitdistrplus::fitdist(vowels$vowel.dur, distr = 'norm', method = 'mle')
+norm_est <- fitdistrplus::fitdist(vowels$vowel.dur, distr = 'norm', method = 'mle')
 
 vowels |> 
   filter(speaker == "tt01") ->
   vowels_tt01
 
-sd_prior <- beta_est$estimate[2]
+sd_prior <- norm_est$estimate[2]
 sd_data <- sd(vowels_tt01$vowel.dur)
 sd_post <- 1/sqrt(1/sd_prior^2 + 1/sd_data^2)
-mean_prior <- beta_est$estimate[1]
+mean_prior <- norm_est$estimate[1]
 mean_data <- mean(vowels_tt01$vowel.dur)
 mean_post <- weighted.mean(c(mean_prior, mean_data), c(1/sd_prior^2, 1/sd_data^2))
 
